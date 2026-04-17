@@ -41,6 +41,45 @@ app.get('/clothing', async (req, res) => {
 
   res.json(data);
 });
+//user specific clothing
+app.get('/clothing/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      weather_type,
+      clothing_type,
+      saved_for_day
+    } = req.query;
+
+    let query = supabase
+      .from('clothing_items')
+      .select('*')
+      .eq('user_id', id); // 👈 FIXED
+
+    if (weather_type) {
+      query = query.eq('weather_type', weather_type);
+    }
+
+    if (clothing_type) {
+      query = query.eq('clothing_type', clothing_type);
+    }
+
+    if (saved_for_day) {
+      query = query.eq('saved_for_day', saved_for_day);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 
 
