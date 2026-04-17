@@ -54,7 +54,7 @@ app.get('/clothing/:id', async (req, res) => {
     let query = supabase
       .from('clothing_items')
       .select('*')
-      .eq('user_id', id); // 👈 FIXED
+      .eq('user_id', id);
 
     if (weather_type) {
       query = query.eq('weather_type', weather_type);
@@ -75,6 +75,52 @@ app.get('/clothing/:id', async (req, res) => {
     }
 
     res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+//get random outfit
+app.get('/outfit/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { weather_type, saved_for_day } = req.query;
+
+    let query = supabase
+      .from('clothing_items')
+      .select('*')
+      .eq('user_id', id);
+
+    // If weather filter is provided
+    if (weather_type) {
+      query = query.eq('weather_type', weather_type);
+    }
+
+    if (saved_for_day) {
+      query = query.eq('saved_for_day', saved_for_day);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    const outfitMap = {};
+
+    for (const item of data) {
+      const type = item.clothing_type;
+
+      // If we don't have this type yet, take it
+      if (!outfitMap[type]) {
+        outfitMap[type] = item;
+      }
+    }
+
+    const outfit = Object.values(outfitMap);
+
+    res.json(outfit);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
