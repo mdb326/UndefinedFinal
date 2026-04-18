@@ -128,7 +128,6 @@ app.get('/outfit/:id', async (req, res) => {
 });
 
 
-
 app.post('/clothing', upload.single('image'), async (req, res) => {
   console.log('BODY:', req.body)
     console.log('FILE:', req.file)
