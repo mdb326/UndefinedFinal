@@ -1,9 +1,14 @@
+
+/* */
+.pageHeader{
+  text-align: center;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
@@ -12,6 +17,30 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Login */
+/* fieldset is the border around a TextField */
+.MuiOutlinedInput-root fieldset{
+  border-color: #a9a9a9;
+}
+.login-box{
+  margin: 0 auto;
+}
+/* text label */
+.login-box .MuiInputLabel-root{
+  color: #a9a9a9;
+}
+/* user input text*/
+.login-box .MuiInputBase-input{
+  color: #ffffff;
+}
+
+
+/* Home */
+.closet-img{
+  display: block;
+}
+
 
 a {
   font-weight: 500;
@@ -24,7 +53,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
