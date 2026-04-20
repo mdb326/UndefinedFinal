@@ -1,10 +1,13 @@
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
+import bcrypt from "bcrypt";
 
 
 import { supabase } from './db/supabaseClient.js';
 import multer from 'multer'
+
+const saltRounds = 10;
 
 const upload = multer({ storage: multer.memoryStorage() })
 
@@ -28,6 +31,75 @@ app.get('/users', async (req, res) => {
   }
 
   res.json(data);
+});
+
+app.post('/user', async (req, res) => {
+  console.log('BODY:', req.body)
+  try {
+    const {
+      username,
+      password,
+    } = req.body
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+
+    // Insert into DB
+    const { data, error } = await supabase
+      .from('users')
+      .insert([
+        {
+          username: username,
+          password: hashedPassword
+        }
+      ]);
+
+    if (error) {
+      console.error('ERROR:', error.message)
+      return res.status(500).json({ error: error.message })
+    }
+
+    res.status(201).json(data[0])
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    console.log(req.body);
+    console.log(username);
+    console.log(password);
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+
+    if (error || !data) {
+      return res.status(400).json({ error: 'Invalid username or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, data.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: data.id,
+        username: data.username
+      }
+    });
+
+  } catch (err) {
+    console.error('LOGIN ERROR:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 app.get('/clothing', async (req, res) => {
