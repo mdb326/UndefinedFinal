@@ -41,6 +41,9 @@ app.post('/user', async (req, res) => {
       password,
     } = req.body
 
+    console.log(username)
+    console.log(password)
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
 
@@ -50,16 +53,18 @@ app.post('/user', async (req, res) => {
       .insert([
         {
           username: username,
-          password: hashedPassword
+          password_hash: hashedPassword
         }
       ]);
+
+    
 
     if (error) {
       console.error('ERROR:', error.message)
       return res.status(500).json({ error: error.message })
     }
 
-    res.status(201).json(data[0])
+    res.status(201).json([])
   } catch (err) {
     res.status(500).json({ error: 'Server error' })
   }
@@ -68,9 +73,6 @@ app.post('/user', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(req.body);
-    console.log(username);
-    console.log(password);
 
     const { data, error } = await supabase
       .from('users')
@@ -88,7 +90,7 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Login successful',
       user: {
         id: data.id,

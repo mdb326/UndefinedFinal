@@ -5,6 +5,33 @@ function Login( { setSection }){
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+
+    const handleCreateUser = async () => {
+    try {
+      const res = await fetch('http://localhost:3000/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        alert(data.error || 'Signup failed')
+        return
+      }
+
+      alert('Account created! You can now log in.')
+    } catch (err) {
+      console.error(err)
+      alert('Server error' + err)
+    }
+  }
     
     return (
         <div>
@@ -49,6 +76,11 @@ function Login( { setSection }){
                     }}
                     >
                     Log in
+                </Button>
+                <Button
+                    className='home-buttons'
+                    onClick={handleCreateUser}>
+                    Create Account
                 </Button>
             </Box>
         </div>
