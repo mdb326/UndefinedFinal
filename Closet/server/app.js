@@ -46,16 +46,72 @@ app.put('/clothing/item/:id', async (req, res) => {
     res.status(200).json({message: 'Updated'})
 })
 
-app.get('/users', async (req, res) => {
+async function requireAuth(req, res, next) {
+  const userId = req.headers['x-user-id'];
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+
+  req.user = { id: userId };
+  next();
+}
+
+async function requireAdmin(req, res, next) {
   const { data, error } = await supabase
     .from('users')
-    .select('*');
+    .select('is_admin')
+    .eq('id', req.user.id)
+    .single();
+
+  if (error || !data) {
+    return res.status(500).json({ error: 'User lookup failed' });
+  }
+
+  if (!data.is_admin) {
+    return res.status(403).json({ error: 'Forbidden: Admins only' });
+  }
+
+  next();
+}
+
+app.get('/users', requireAuth, requireAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select(
+      `*,
+      clothing_items(count)`
+    );
 
   if (error) {
     return res.status(500).json({ error: error.message });
   }
 
   res.json(data);
+});
+
+app.post('/users/:id/promote', requireAuth, requireAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ is_admin: true })
+    .eq('id', Number(id))
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  res.json({
+    message: 'User promoted to admin',
+    user: data
+  });
 });
 
 app.post('/user', async (req, res) => {
