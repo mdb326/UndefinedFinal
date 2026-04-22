@@ -20,6 +20,31 @@ app.use(express.json())
 // set up some midlleware to handle cors
 app.use(cors())
 
+//removes clothing item from the database
+app.delete('/clothing/item/:id', async (req, res) => {
+  const { id } = req.params
+  const {error} = await supabase
+    .from('clothing_items')
+    .delete()
+    .eq('id', id)
+
+  if (error) return res.status(500).json({ error: error.message })
+    res.status(200).json({message: 'Deleted'})
+})
+
+//updates saved_for_day for clothing item
+app.put('/clothing/item/:id', async (req, res) => {
+  const { id } = req.params
+  const { saved_for_day } = req.body
+
+  const{ error } = await supabase
+    .from('clothing_items')
+    .update({ saved_for_day })
+    .eq('id', id)
+
+    if (error) return res.status(500).json({ error: error.message })
+    res.status(200).json({message: 'Updated'})
+})
 
 app.get('/users', async (req, res) => {
   const { data, error } = await supabase
@@ -267,8 +292,10 @@ app.post('/clothing', upload.single('image'), async (req, res) => {
 })
 
 
+
 app.listen(app.get('port'), () => {
     console.log('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
     console.log('  Press CTRL-C to stop\n');
   });
+  
   
