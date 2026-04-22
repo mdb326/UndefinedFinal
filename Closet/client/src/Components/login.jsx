@@ -1,7 +1,7 @@
 import { Box, TextField, Button } from '@mui/material'
 import { useState } from 'react'
 // initial landing page for user to log in
-function Login( { setSection }){
+function Login( { setSection, setUser }){
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -66,7 +66,8 @@ function Login( { setSection }){
                             alert(data.error || 'Login failed');
                             return;
                         }
-
+                        
+                        setUser(data.user);
                         setSection('home');
 
                         } catch (err) {
