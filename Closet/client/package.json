@@ -17,6 +17,7 @@
     "@mui/x-date-pickers": "^9.0.0",
     "dayjs": "^1.11.20",
     "he": "^1.2.0",
+    "jsonwebtoken": "^9.0.3",
     "material-react-table": "^3.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

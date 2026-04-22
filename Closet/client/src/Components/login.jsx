@@ -7,32 +7,64 @@ function Login( { setSection, setUser }){
     const [password, setPassword] = useState('')
 
     const handleCreateUser = async () => {
-    try {
-      const res = await fetch('http://localhost:3000/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      })
+        try {
+        const res = await fetch('http://localhost:3000/user', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            username,
+            password,
+            }),
+        })
 
-      const data = await res.json()
+        const data = await res.json()
 
-      if (!res.ok) {
-        alert(data.error || 'Signup failed')
-        return
-      }
+        if (!res.ok) {
+            alert(data.error || 'Signup failed')
+            return
+        }
 
-      alert('Account created! You can now log in.')
-    } catch (err) {
-      console.error(err)
-      alert('Server error' + err)
+        alert('Account created! You can now log in.')
+        } catch (err) {
+        console.error(err)
+        alert('Server error' + err)
+        }
     }
-  }
-    
+    const handleLoginUser = async () => {
+        try {
+            const res = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username,
+                password,
+            }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+            alert(data.error || 'Login failed');
+            return;
+            }
+
+            localStorage.setItem('token', data.token);
+
+            setToken(data.token);
+
+            setUser(data.user);
+
+            setSection('home');
+
+        } catch (err) {
+            console.error(err);
+            alert('Server error');
+        }
+    }
     return (
         <div>
             <Box className='login-box' sx={{
@@ -47,35 +79,7 @@ function Login( { setSection, setUser }){
                     value={password} onChange={(e) => setPassword(e.target.value)}/>
                 <Button
                     className='home-buttons'
-                    onClick={async () => {
-                        try {
-                        const res = await fetch('http://localhost:3000/login', {
-                            method: 'POST',
-                            headers: {
-                            'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                            "username": username,
-                            "password": password,
-                            }),
-                        });
-
-                        const data = await res.json();
-
-                        if (!res.ok) {
-                            alert(data.error || 'Login failed');
-                            return;
-                        }
-                        
-                        setUser(data.user);
-                        setSection('home');
-
-                        } catch (err) {
-                        console.error(err);
-                        alert('Server error');
-                        }
-                    }}
-                    >
+                    onClick={handleLoginUser}>
                     Log in
                 </Button>
                 <Button

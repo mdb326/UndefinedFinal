@@ -10,18 +10,25 @@ function App() {
   // used to show the different pages
   const [section, setSection] = useState('login')
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState(localStorage.getItem('token'))
+
+  useEffect(() => {
+    if (!token) {
+      setSection('login')
+    }
+  }, [token])
 
   return (
     <div>
       {/** clicking on the header will bring user back to 'home' */}
       <h1 className="pageHeader" onClick={()=> setSection('home')}>MyDigitalCloset</h1>
 
-      {section === 'login' && <Login setSection={setSection} setUser={setUser}/>}
+      {section === 'login' && <Login setSection={setSection} setUser={setUser} setToken={setToken}/>}
       {section === 'home' && <Home setSection={setSection}/>}
-      {section === 'addClothing' && <AddClothing setSection={setSection} user={user}/>}
-      {section === 'myClothes' && <MyClothes user={user}/>}
-      {section === 'generateOutfit' && <GenerateOutfit user={user}/>}
-      {section === 'schedule' && <Schedule user={user}/>}
+      {section === 'addClothing' && <AddClothing setSection={setSection} user={user} token={token}/>}
+      {section === 'myClothes' && <MyClothes user={user} token={token}/>}
+      {section === 'generateOutfit' && <GenerateOutfit user={user} token={token}/>}
+      {section === 'schedule' && <Schedule user={user} token={token}/>}
 
     </div>
   )
