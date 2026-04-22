@@ -16,10 +16,12 @@ const style = {
   bgcolor: 'gray',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4
+  p: 4,
+  maxHeight: '90vh',
+  overflowY: 'auto'
 }
 
-function AddClothing() {
+function AddClothing({ user }) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const [name, setName] = useState('')
@@ -44,7 +46,7 @@ function AddClothing() {
   const addClothing = () => {
     const formData = new FormData()
 
-    formData.append('user_id', 1) // replace later with auth
+    formData.append('user_id', user.id) // replace later with auth
     formData.append('name', name)
     formData.append('weather_type', weatherType)
     formData.append('clothing_type', clothingType)
