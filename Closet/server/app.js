@@ -7,6 +7,10 @@ import bcrypt from "bcrypt";
 import { supabase } from './db/supabaseClient.js';
 import multer from 'multer'
 
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+
 const saltRounds = 10;
 
 const upload = multer({ storage: multer.memoryStorage() })
@@ -21,40 +25,52 @@ app.use(express.json())
 app.use(cors())
 
 //removes clothing item from the database
-app.delete('/clothing/item/:id', async (req, res) => {
-  const { id } = req.params
-  const {error} = await supabase
+app.delete('/clothing/item/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
+
+  const { error } = await supabase
     .from('clothing_items')
     .delete()
     .eq('id', id)
+    .eq('user_id', req.user.id);
 
-  if (error) return res.status(500).json({ error: error.message })
-    res.status(200).json({message: 'Deleted'})
-})
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json({ message: 'Deleted' });
+});
 
 //updates saved_for_day for clothing item
-app.put('/clothing/item/:id', async (req, res) => {
-  const { id } = req.params
-  const { saved_for_day } = req.body
+app.put('/clothing/item/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const { saved_for_day } = req.body;
 
-  const{ error } = await supabase
+  const { error } = await supabase
     .from('clothing_items')
     .update({ saved_for_day })
     .eq('id', id)
+    .eq('user_id', req.user.id);
 
-    if (error) return res.status(500).json({ error: error.message })
-    res.status(200).json({message: 'Updated'})
-})
+  if (error) return res.status(500).json({ error: error.message });
 
-async function requireAuth(req, res, next) {
-  const userId = req.headers['x-user-id'];
+  res.json({ message: 'Updated' });
+});
 
-  if (!userId) {
-    return res.status(401).json({ error: 'Not authenticated' });
+function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Missing token' });
   }
 
-  req.user = { id: userId };
-  next();
+  const token = authHeader.replace('Bearer ', '');
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = { id: Number(decoded.id) };
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
 }
 
 async function requireAdmin(req, res, next) {
@@ -69,7 +85,7 @@ async function requireAdmin(req, res, next) {
   }
 
   if (!data.is_admin) {
-    return res.status(403).json({ error: 'Forbidden: Admins only' });
+    return res.status(403).json({ error: 'Admins only' });
   }
 
   next();
@@ -171,181 +187,132 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    return res.status(200).json({
-      message: 'Login successful',
-      user: {
-        id: data.id,
-        username: data.username
-      }
-    });
+    const token = jwt.sign(
+      { id: data.id },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    return res.json({ token });
 
   } catch (err) {
-    console.error('LOGIN ERROR:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-app.get('/clothing', async (req, res) => {
+app.get('/clothing', requireAuth, async (req, res) => {
   const { data, error } = await supabase
     .from('clothing_items')
-    .select('*');
+    .select('*')
+    .eq('user_id', req.user.id);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  if (error) return res.status(500).json({ error: error.message });
 
   res.json(data);
 });
 //user specific clothing
-app.get('/clothing/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      weather_type,
-      clothing_type,
-      saved_for_day
-    } = req.query;
+app.get('/clothing/:id', requireAuth, requireAdmin, async (req, res) => {
+  const { id } = req.params;
 
-    let query = supabase
-      .from('clothing_items')
-      .select('*')
-      .eq('user_id', id);
-
-    if (weather_type) {
-      query = query.eq('weather_type', weather_type);
-    }
-
-    if (clothing_type) {
-      query = query.eq('clothing_type', clothing_type);
-    }
-
-    if (saved_for_day) {
-      query = query.eq('saved_for_day', saved_for_day);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+  if (req.user.id !== Number(id)) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
+
+  const { data, error } = await supabase
+    .from('clothing_items')
+    .select('*')
+    .eq('user_id', id);
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data);
 });
 
 //get random outfit
-app.get('/outfit/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { weather_type, saved_for_day } = req.query;
+app.get('/outfit/:id', requireAuth, async (req, res) => {
+  const { id } = req.params;
 
-    let query = supabase
-      .from('clothing_items')
-      .select('*')
-      .eq('user_id', id);
-
-    // If weather filter is provided
-    if (weather_type) {
-      query = query.eq('weather_type', weather_type);
-    }
-
-    if (saved_for_day) {
-      query = query.eq('saved_for_day', saved_for_day);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-
-    const outfitMap = {};
-
-    for (const item of data) {
-      const type = item.clothing_type;
-
-      // If we don't have this type yet, take it
-      if (!outfitMap[type]) {
-        outfitMap[type] = item;
-      }
-    }
-
-    const outfit = Object.values(outfitMap);
-
-    res.json(outfit);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+  if (req.user.id !== Number(id)) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
+
+  const { weather_type, saved_for_day } = req.query;
+
+  let query = supabase
+    .from('clothing_items')
+    .select('*')
+    .eq('user_id', id);
+
+  if (weather_type) query = query.eq('weather_type', weather_type);
+  if (saved_for_day) query = query.eq('saved_for_day', saved_for_day);
+
+  const { data, error } = await query;
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  const outfitMap = {};
+  for (const item of data) {
+    if (!outfitMap[item.clothing_type]) {
+      outfitMap[item.clothing_type] = item;
+    }
+  }
+
+  res.json(Object.values(outfitMap));
 });
 
 
-app.post('/clothing', upload.single('image'), async (req, res) => {
-  console.log('BODY:', req.body)
-    console.log('FILE:', req.file)
+app.post('/clothing', requireAuth, upload.single('image'), async (req, res) => {
   try {
     const {
-      user_id,
       name,
       weather_type,
       clothing_type,
       saved_for_day
-    } = req.body
+    } = req.body;
 
-    let picture_url = null
+    let picture_url = null;
 
-    // If image exists → upload to Supabase
     if (req.file) {
-      const fileExt = req.file.originalname.split('.').pop()
-      const fileName = `${Date.now()}.${fileExt}`
+      const fileExt = req.file.originalname.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('clothing-images')
         .upload(fileName, req.file.buffer, {
           contentType: req.file.mimetype
-        })
+        });
 
       if (uploadError) {
-        console.error('UPLOAD ERROR:', uploadError)
-        return res.status(500).json({ error: uploadError.message })
+        return res.status(500).json({ error: uploadError.message });
       }
 
-      // Get public URL
       const { data } = supabase.storage
         .from('clothing-images')
-        .getPublicUrl(fileName)
+        .getPublicUrl(fileName);
 
-      picture_url = data.publicUrl
+      picture_url = data.publicUrl;
     }
 
-    // Insert into DB
     const { data, error } = await supabase
       .from('clothing_items')
-      .insert([
-        {
-          user_id,
-          name,
-          weather_type,
-          clothing_type,
-          saved_for_day,
-          picture_url
-        }
-      ])
+      .insert([{
+        user_id: req.user.id, // 🔥 FIXED
+        name,
+        weather_type,
+        clothing_type,
+        saved_for_day,
+        picture_url
+      }])
       .select()
+      .single();
 
-    if (error) {
-      console.error('ERROR:', error.message)
-      return res.status(500).json({ error: error.message })
-    }
+    if (error) return res.status(500).json({ error: error.message });
 
-    res.status(201).json(data[0])
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' })
+    res.status(201).json(data);
+  } catch {
+    res.status(500).json({ error: 'Server error' });
   }
-})
+});
 
 
 
