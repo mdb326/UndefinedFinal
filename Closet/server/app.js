@@ -201,14 +201,41 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/clothing', requireAuth, async (req, res) => {
-  const { data, error } = await supabase
-    .from('clothing_items')
-    .select('*')
-    .eq('user_id', req.user.id);
+  try {
+    const {
+      weather_type,
+      clothing_type,
+      saved_for_day
+    } = req.query;
 
-  if (error) return res.status(500).json({ error: error.message });
+    let query = supabase
+      .from('clothing_items')
+      .select('*')
+      .eq('user_id', req.user.id);
 
-  res.json(data);
+    if (weather_type) {
+      query = query.eq('weather_type', weather_type);
+    }
+
+    if (clothing_type) {
+      query = query.eq('clothing_type', clothing_type);
+    }
+
+    if (saved_for_day) {
+      query = query.eq('saved_for_day', saved_for_day);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json(data);
+
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 //user specific clothing
 app.get('/clothing/:id', requireAuth, requireAdmin, async (req, res) => {
@@ -229,35 +256,43 @@ app.get('/clothing/:id', requireAuth, requireAdmin, async (req, res) => {
 });
 
 //get random outfit
-app.get('/outfit/:id', requireAuth, async (req, res) => {
-  const { id } = req.params;
+app.get('/outfit', requireAuth, async (req, res) => {
+  try {
+    const { weather_type, saved_for_day } = req.query;
 
-  if (req.user.id !== Number(id)) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+    let query = supabase
+      .from('clothing_items')
+      .select('*')
+      .eq('user_id', req.user.id);
 
-  const { weather_type, saved_for_day } = req.query;
-
-  let query = supabase
-    .from('clothing_items')
-    .select('*')
-    .eq('user_id', id);
-
-  if (weather_type) query = query.eq('weather_type', weather_type);
-  if (saved_for_day) query = query.eq('saved_for_day', saved_for_day);
-
-  const { data, error } = await query;
-
-  if (error) return res.status(500).json({ error: error.message });
-
-  const outfitMap = {};
-  for (const item of data) {
-    if (!outfitMap[item.clothing_type]) {
-      outfitMap[item.clothing_type] = item;
+    if (weather_type) {
+      query = query.eq('weather_type', weather_type);
     }
-  }
 
-  res.json(Object.values(outfitMap));
+    if (saved_for_day) {
+      query = query.eq('saved_for_day', saved_for_day);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Build outfit (one per clothing type)
+    const outfitMap = {};
+
+    for (const item of data) {
+      if (!outfitMap[item.clothing_type]) {
+        outfitMap[item.clothing_type] = item;
+      }
+    }
+
+    res.json(Object.values(outfitMap));
+
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 
