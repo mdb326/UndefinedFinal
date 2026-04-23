@@ -21,7 +21,7 @@ const style = {
   overflowY: 'auto'
 }
 
-function AddClothing({ user }) {
+function AddClothing({ user, token }) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const [name, setName] = useState('')
@@ -46,7 +46,7 @@ function AddClothing({ user }) {
   const addClothing = () => {
     const formData = new FormData()
 
-    formData.append('user_id', user.id) // replace later with auth
+    // formData.append('user_id', user.id) // replace later with auth
     formData.append('name', name)
     formData.append('weather_type', weatherType)
     formData.append('clothing_type', clothingType)
@@ -60,7 +60,10 @@ function AddClothing({ user }) {
 
     fetch('http://localhost:3000/clothing', {
       method: 'POST',
-      body: formData // ⚠️ DO NOT set Content-Type
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData // DO NOT set Content-Type
     })
       .then(res => {
         if (!res.ok) throw new Error('Upload failed')

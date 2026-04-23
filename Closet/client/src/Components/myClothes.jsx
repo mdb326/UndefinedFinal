@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button, MenuItem, TextField, Stack} from  '@mui/material'
 
-function MyClothes({ user }) {
+function MyClothes({ user, token }) {
     //creates a state that stores the clothes of the user, and two states for the filters
     const[clothes, setClothes] = useState([])
     const[clothingTypeFilter, setClothingTypeFilter] = useState('')
@@ -9,23 +9,34 @@ function MyClothes({ user }) {
 
 //fetches the clothing items for the logged in user 
 const getClothes = () => {
-    let url = `http://localhost:3000/clothing/${user.id}?`
+    let url = `http://localhost:3000/clothing?`
     if(clothingTypeFilter) url += `clothing_type=${clothingTypeFilter}&`
     if(weatherTypeFilter) url += `weather_type=${weatherTypeFilter}&`
 
-    fetch(url)
+    fetch(url, {
+        headers: {
+        Authorization: `Bearer ${token}`
+        }
+    })
         .then(res => res.json())
         .then(data => setClothes(data))
 }
 
 //fetches the clothes on reload
 useEffect(()=> {
-    getClothes()
-}, [])
+    if (token) {
+        getClothes()
+    }
+}, [token])
 
 //deletes a clothing item and then refetches the clothes to update the list
 const deleteItem = (id) => {
-    fetch(`http://localhost:3000/clothing/item/${id}`, {method: 'DELETE'})
+    fetch(`http://localhost:3000/clothing/item/${id}`, {
+        method: 'DELETE', 
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
     .then(() => getClothes())
 }
 

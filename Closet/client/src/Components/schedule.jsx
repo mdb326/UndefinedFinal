@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Button, MenuItem, TextField } from '@mui/material'
 
-function Schedule({user}){
+function Schedule({user, token}){
     //creates a state to store the clothes of the user and a state to store the schedule map which maps each day to the saved outfit for that day
     const[clothes, setClothes] = useState([])
     const[scheduleMap, setScheduleMap] = useState({})   
@@ -21,7 +21,11 @@ const days = getNextSevenDays()
 
 //gets all the clothing items to fill the dropdown 
 const getClothes = () => {
-    fetch(`http://localhost:3000/clothing/${user.id}`)
+    fetch(`http://localhost:3000/clothing`, {
+        headers: {
+        Authorization: `Bearer ${token}`
+        }
+    })
     .then(res => res.json())
     .then(data => setClothes(data))
 }
@@ -30,7 +34,11 @@ const getClothes = () => {
  const getSavedOutfits = () => {
     const map = {}
     days.forEach(day=> {
-        fetch(`http://localhost:3000/clothing/${user.id}?saved_for_day=${day}`)
+        fetch(`http://localhost:3000/clothing?saved_for_day=${day}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(res=> res.json())
             .then(data=> {
                 map[day]= data
@@ -41,15 +49,20 @@ const getClothes = () => {
 
     //first load
     useEffect(() => {
-        getClothes()
-        getSavedOutfits()
-    },[])
+        if (token){
+            getClothes()
+            getSavedOutfits()
+        }
+    },[token])
 
     //assigns the clothing item to the specific day 
     const saveItemForDay = (itemId, day) => {
         fetch(`http://localhost:3000/clothing/item/${itemId}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify({saved_for_day: day})
         }).then(() => getSavedOutfits())
     }
@@ -58,7 +71,10 @@ const getClothes = () => {
     const removeItemFromDay = (itemId) => {
         fetch(`http://localhost:3000/clothing/item/${itemId}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
             body: JSON.stringify({saved_for_day: null})
         }).then(() => getSavedOutfits())
     }

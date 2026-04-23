@@ -1,7 +1,7 @@
 import { Box, TextField, Button } from '@mui/material'
 import { useState } from 'react'
 // initial landing page for user to log in
-function Login( { setSection, setUser }){
+function Login( { setSection, setUser, setToken }){
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')

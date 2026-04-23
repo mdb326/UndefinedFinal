@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@mui/material'
 
-function GenerateOutfit({ user }){
+function GenerateOutfit({ user, token }){
     //creates a state to store the generated outfit and a state to store the weather label
     const [outfit, setOutfit] = useState([])
     const [weatherLabel, setWeatherLabel] = useState('')
@@ -33,7 +33,11 @@ function GenerateOutfit({ user }){
                     setWeatherLabel(`${temp}°F — ${weatherType}`)
                     
                     //Random outfit after temperature filters 
-                    fetch(`http://localhost:3000/outfit/${user.id}?weather_type=${weatherType}`)
+                    fetch(`http://localhost:3000/outfit?weather_type=${weatherType}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                         .then(res=> res.json())
                         .then(outfitData => setOutfit(outfitData))
                 })
