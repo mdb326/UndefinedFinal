@@ -61,7 +61,7 @@ function GenerateOutfit({ setSection, user, token }){
                             <img src={item.picture_url} alt={item.name} style={{width: '100%', borderRadius: '4px'}}/>
                         )}
                         <p><strong>{item.name}</strong></p>
-                        <p>{item.clothing_type} - {item.weather_type}</p>
+                        <p>{item.clothing_type} - {item.weather_type.join(', ')}</p>
                     </div>
                 ))}
             </div>

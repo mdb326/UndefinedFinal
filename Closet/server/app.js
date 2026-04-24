@@ -214,7 +214,7 @@ app.get('/clothing', requireAuth, async (req, res) => {
       .eq('user_id', req.user.id);
 
     if (weather_type) {
-      query = query.eq('weather_type', weather_type);
+      query = query.contains('weather_type', [weather_type]);
     }
 
     if (clothing_type) {
@@ -266,7 +266,7 @@ app.get('/outfit', requireAuth, async (req, res) => {
       .eq('user_id', req.user.id);
 
     if (weather_type) {
-      query = query.eq('weather_type', weather_type);
+      query = query.contains('weather_type', [weather_type]);
     }
 
     if (saved_for_day) {
@@ -307,6 +307,18 @@ app.post('/clothing', requireAuth, upload.single('image'), async (req, res) => {
 
     let picture_url = null;
 
+    // make sure weather types are in an array
+    let weatherTypesArray
+    if(!weather_type){
+      weatherTypesArray = []
+    }
+    else if(Array.isArray(weather_type)){
+      weatherTypesArray = weather_type
+    }
+    else{
+      weatherTypesArray = [weather_type]
+    }
+
     if (req.file) {
       const fileExt = req.file.originalname.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -331,7 +343,7 @@ app.post('/clothing', requireAuth, upload.single('image'), async (req, res) => {
     const { data, error } = await supabase
       .from('clothing_items')
       .insert([{
-        user_id: req.user.id, // 🔥 FIXED
+        user_id: req.user.id, 
         name,
         weather_type,
         clothing_type,

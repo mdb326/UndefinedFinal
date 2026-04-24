@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { Stack, MenuItem, TextField } from '@mui/material'
+import { Stack, MenuItem, TextField, Checkbox, OutlinedInput, Select, FormControl, InputLabel, ListItemText } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -25,7 +25,7 @@ function AddClothing({ setSection, user, token }) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const [name, setName] = useState('')
-  const [weatherType, setWeatherType] = useState('')
+  const [weatherTypes, setWeatherTypes] = useState([])
   const [clothingType, setClothingType] = useState('')
   const [savedForDay, setSavedForDay] = useState(null)
   const [image, setImage] = useState(null)
@@ -48,7 +48,7 @@ function AddClothing({ setSection, user, token }) {
 
     // formData.append('user_id', user.id) // replace later with auth
     formData.append('name', name)
-    formData.append('weather_type', weatherType)
+    weatherTypes.forEach(t => formData.append('weather_type', t))
     formData.append('clothing_type', clothingType)
     if (savedForDay) {
       formData.append('saved_for_day', savedForDay.format('YYYY-MM-DD'))
@@ -72,7 +72,7 @@ function AddClothing({ setSection, user, token }) {
         // reset everything
         setModalOpen(false)
         setName('')
-        setWeatherType('')
+        setWeatherTypes([])
         setClothingType('')
         setSavedForDay(null)
         setImage(null)
@@ -99,17 +99,36 @@ function AddClothing({ setSection, user, token }) {
               onChange={e => setName(e.target.value)}
             />
 
-            <TextField
-              select
-              label="Weather Type"
-              value={weatherType}
-              onChange={e => setWeatherType(e.target.value)}
-            >
-              <MenuItem value="hot">Hot</MenuItem>
-              <MenuItem value="warm">Warm</MenuItem>
-              <MenuItem value="cool">Cool</MenuItem>
-              <MenuItem value="cold">Cold</MenuItem>
-            </TextField>
+            {/** form control is used here to create a select menu
+             * user can select more than one weather type for the clothing item
+              */}
+            <FormControl>
+              <InputLabel> Weather Type</InputLabel>
+              <Select
+                multiple
+                value={weatherTypes}
+                onChange={e => setWeatherTypes(e.target.value)}
+                input={<OutlinedInput label = "Weather Type" />}
+                renderValue={(selected) => selected.join(', ')}
+              >
+                <MenuItem value="hot">
+                  <Checkbox checked={weatherTypes.includes('hot')} />
+                  <ListItemText primary="Hot" />
+                </MenuItem>
+                <MenuItem value="warm">
+                  <Checkbox checked={weatherTypes.includes('warm')} />
+                  <ListItemText primary="Warm" />
+                </MenuItem>
+                <MenuItem value="cool">
+                  <Checkbox checked={weatherTypes.includes('cool')} />
+                  <ListItemText primary="Cool" />
+                </MenuItem>
+                <MenuItem value="cold">
+                  <Checkbox checked={weatherTypes.includes('cold')} />
+                  <ListItemText primary="Cold" />
+                </MenuItem>
+              </Select>
+            </FormControl>
 
             <TextField
               select

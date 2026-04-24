@@ -78,7 +78,7 @@ return(
                         <img src={item.picture_url} alt={item.name} style={{width: '100%', borderRadius: '4px'}}/>
                     )}
                 <p><strong>{item.name}</strong></p>
-                <p>{item.clothing_type} - {item.weather_type}</p>
+                <p>{item.clothing_type} - {item.weather_type.join(', ')}</p>
                 <Button color = 'error' onClick={() => deleteItem(item.id)}>Delete</Button>
         </div>
             ))}
