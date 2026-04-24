@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@mui/material'
 
-function GenerateOutfit({ user, token }){
+function GenerateOutfit({ setSection, user, token }){
     //creates a state to store the generated outfit and a state to store the weather label
     const [outfit, setOutfit] = useState([])
     const [weatherLabel, setWeatherLabel] = useState('')
@@ -46,6 +46,7 @@ function GenerateOutfit({ user, token }){
 
     return (
         <div>
+            <button className='back-button' onClick={() => (setSection('home'))}>Back</button>
             <h1>Generate Outfit</h1>
             <Button variant = 'contained' onClick={generateOutfit}>Generate Outfit</Button>
 

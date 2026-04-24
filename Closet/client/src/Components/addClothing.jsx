@@ -21,7 +21,7 @@ const style = {
   overflowY: 'auto'
 }
 
-function AddClothing({ user, token }) {
+function AddClothing({ setSection, user, token }) {
   const [modalOpen, setModalOpen] = useState(false)
 
   const [name, setName] = useState('')
@@ -83,6 +83,7 @@ function AddClothing({ user, token }) {
 
   return (
     <>
+      <button className='back-button' onClick={() => (setSection('home'))}>Back</button>
       <h1>Clothing Manager</h1>
       <Button onClick={handleModalOpen}>+ Add Clothing Item</Button>
 

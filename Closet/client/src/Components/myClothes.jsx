@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button, MenuItem, TextField, Stack} from  '@mui/material'
 
-function MyClothes({ user, token }) {
+function MyClothes({ setSection, user, token }) {
     //creates a state that stores the clothes of the user, and two states for the filters
     const[clothes, setClothes] = useState([])
     const[clothingTypeFilter, setClothingTypeFilter] = useState('')
@@ -42,6 +42,8 @@ const deleteItem = (id) => {
 
 return(
     <div>
+        <button className='back-button' onClick={() => (setSection('home'))}>Back</button>
+
         <h1>My Clothes</h1>
 
         {/*Filter section with dropdowns for clothing type and weather type, and a button to apply the filters*/}

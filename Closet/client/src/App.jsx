@@ -34,9 +34,9 @@ function App() {
       {section === 'login' && <Login setSection={setSection} setUser={setUser} setToken={setToken}/>}
       {section === 'home' && <Home setSection={setSection}/>}
       {section === 'addClothing' && <AddClothing setSection={setSection} user={user} token={token}/>}
-      {section === 'myClothes' && <MyClothes user={user} token={token}/>}
-      {section === 'generateOutfit' && <GenerateOutfit user={user} token={token}/>}
-      {section === 'schedule' && <Schedule user={user} token={token}/>}
+      {section === 'myClothes' && <MyClothes setSection={setSection} user={user} token={token}/>}
+      {section === 'generateOutfit' && <GenerateOutfit setSection={setSection} user={user} token={token}/>}
+      {section === 'schedule' && <Schedule setSection={setSection} user={user} token={token}/>}
 
     </div>
   )
