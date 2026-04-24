@@ -10,6 +10,7 @@ function App() {
   // used to show the different pages
   const [section, setSection] = useState('login')
   const [user, setUser] = useState(null)
+  
   const [token, setToken] = useState(localStorage.getItem('token'))
 
   useEffect(() => {
@@ -20,8 +21,15 @@ function App() {
 
   return (
     <div>
-      {/** clicking on the header will bring user back to 'home' */}
-      <h1 className="pageHeader" onClick={()=> setSection('home')}>MyDigitalCloset</h1>
+      {/** clicking on the header will bring user back to 'home' 
+       * Only if the user is logged in ..
+      */}
+      <h1 className="pageHeader" onClick={()=> {
+        if(user !== null){
+          setSection('home')}
+        }
+      }
+      >MyDigitalCloset</h1>
 
       {section === 'login' && <Login setSection={setSection} setUser={setUser} setToken={setToken}/>}
       {section === 'home' && <Home setSection={setSection}/>}
