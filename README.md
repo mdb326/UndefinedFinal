@@ -1,4 +1,4 @@
-#MyDigitalCloset <br>
+# MyDigitalCloset <br>
 Digital wardrobe app the helps the users decide what outfit to put on for the day. The user uploads their clothes, can filter by description, and gets the recommendation based on the weather in the area. 
 
 
