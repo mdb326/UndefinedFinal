@@ -352,7 +352,7 @@ app.post('/clothing', requireAuth, upload.single('image'), async (req, res) => {
       .insert([{
         user_id: req.user.id, 
         name,
-        weather_type,
+        weather_type: weatherTypesArray,
         clothing_type,
         saved_for_day,
         picture_url
