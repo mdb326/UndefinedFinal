@@ -49,7 +49,7 @@ return(
         {/*Filter section with dropdowns for clothing type and weather type, and a button to apply the filters*/}
         <Stack direction='row' spacing={2} style={{marginBottom: '20px'}}>
             <TextField select label = "Clothing Type" value={clothingTypeFilter} onChange={e => setClothingTypeFilter(e.target.value)}
-                style={{width: 150}}>
+                style={{width: 150}} sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}>
                 <MenuItem value="">All</MenuItem>
                 <MenuItem value="top">Top</MenuItem>
                 <MenuItem value="bottom">Bottom</MenuItem>
@@ -59,7 +59,7 @@ return(
             </TextField>
 
             <TextField select label = "Weather Type" value={weatherTypeFilter} onChange={e => setWeatherTypeFilter(e.target.value)}
-            style ={{width: 150}}>
+            style ={{width: 150}} sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}>
                 <MenuItem value="">All</MenuItem>
                 <MenuItem value="hot">Hot</MenuItem>
                 <MenuItem value="warm">Warm</MenuItem>
@@ -73,7 +73,7 @@ return(
         {/* Displays all the clothing item as cards */}
         <div style={{display: 'flex', flexWrap: 'wrap', gap: '16px'}}>
             {clothes.map(item=>(
-                <div key ={item.id} style={{border: '1px solid #ccc', borderRadius:'8px', padding: '8px', width: '200px'}}>
+                <div key={item.id} style={{border: '1px solid #444', borderRadius:'8px', padding: '8px', width: '200px', backgroundColor: '#2a2a2a'}}>
                     {item.picture_url &&(
                         <img src={item.picture_url} alt={item.name} style={{width: '100%', borderRadius: '4px'}}/>
                     )}
