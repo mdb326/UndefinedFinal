@@ -102,8 +102,10 @@ const getClothes = () => {
         </div>
 
         {/*Dropdown*/}
-        <TextField select label="Add item" style ={{width:200}}
-         onChange={e => saveItemForDay(e.target.value, day)}>
+        <TextField select
+            label="Add item"
+            style={{ width: 200, backgroundColor: 'white', borderRadius: '4px' }}
+            onChange={e => saveItemForDay(e.target.value, day)}>
         {clothes.map(item => (
         <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
         ))}
