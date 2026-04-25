@@ -193,7 +193,14 @@ app.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    return res.json({ token });
+    return res.json({
+      token,
+      user: {
+        id: data.id,
+        username: data.username,
+        is_admin: data.is_admin
+      }
+    });
 
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
