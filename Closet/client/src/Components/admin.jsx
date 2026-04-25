@@ -32,48 +32,65 @@ function Admin({ token }) {
       <h1>Admin Panel</h1>
 
       <Grid container spacing={2}>
-        {users.map(u => {
-          const itemCount = u.clothing_items?.[0]?.count || 0;
+  {users.map(u => {
+    const itemCount = u.clothing_items?.[0]?.count || 0;
 
-          return (
-            <Grid item xs={12} sm={6} md={4} key={u.id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">
-                    {u.username}
-                  </Typography>
+    return (
+      <Grid item xs={12} sm={6} md={6} key={u.id} sx={{ display: 'flex' }}>
+        <Card sx={{
+            backgroundColor: 'white',
+            border: '1px solid #333',
+            borderRadius: '12px',
+            boxShadow: 'none',
 
-                  <Typography variant="body2">
-                    User ID: {u.id}
-                  </Typography>
+            width: '100%',
+            flex: 1,            
+            height: '220px',
 
-                  <Typography variant="body2">
-                    Items: {itemCount}
-                  </Typography>
+            display: 'flex',
+            flexDirection: 'column',
+        }}>
+          <CardContent sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            height: '100%'
+          }}>
+            <Typography variant="h6">
+              {u.username}
+            </Typography>
 
-                  <div style={{ marginTop: '8px', marginBottom: '8px' }}>
-                    {u.is_admin ? (
-                      <Chip label="Admin" color="success" />
-                    ) : (
-                      <Chip label="User" />
-                    )}
-                  </div>
+            <Typography variant="body2">
+              User ID: {u.id}
+            </Typography>
 
-                  {!u.is_admin && (
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={() => promoteUser(u.id)}
-                    >
-                      Promote to Admin
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
+            <Typography variant="body2">
+              Items: {itemCount}
+            </Typography>
+
+            <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+              {u.is_admin ? (
+                <Chip label="Admin" color="success" />
+              ) : (
+                <Chip label="User" />
+              )}
+            </div>
+
+            {!u.is_admin && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => promoteUser(u.id)}
+              >
+                Promote to Admin
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       </Grid>
+    );
+  })}
+</Grid>
     </div>
   );
 }
