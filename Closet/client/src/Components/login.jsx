@@ -53,6 +53,7 @@ function Login( { setSection, setUser, setToken }){
             }
 
             localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
 
             setToken(data.token);
 
