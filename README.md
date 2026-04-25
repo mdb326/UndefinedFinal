@@ -1,32 +1,32 @@
-MyDigitalCloset
+MyDigitalCloset <br>
 Digital wardrobe app the helps the users decide what outfit to put on for the day. The user uploads their clothes, can filter by description, and gets the recommendation based on the weather in the area. 
 
 
-Team Members 
-Dane Song - Developed the frontend
-Matthew Bergin - Developed the backend 
-Ryan Chrostowski - Integration and adding features
+Team Members: <br>
+-Dane Song - Developed the frontend <br>
+-Matthew Bergin - Developed the backend <br>
+-Ryan Chrostowski - Integration and adding features <br>
 
 
-App Features
-User Accounts
-The users can sign up with a username and a password. The passwords are actually hashed. The accounts have either a standard role or admin role. The admins can view all the users and promote other users to the admin role in the Admin Panel 
+App Features: <br>
+User Accounts: <br>
+-The users can sign up with a username and a password. The passwords are actually hashed. The accounts have either a standard role or admin role. The admins can view all the users and promote other users to the admin role in the Admin Panel 
 
 
-Database
-User information and their clothing are stored in the Supabase database.
+Database: <br>
+-User information and their clothing are stored in the Supabase database.
 
-Interactive UI 
-React and Material UI
-Image upload to add clothing
-Ability to filter the wardrobe by clothing type and weather type
-Delete items in your closet
-Generate outfit based on the weather in the user’s current location 
-Plan out the outfits for the next 7 days on a weekly basis 
+-Interactive UI <br>
+-React and Material UI <br>
+-Image upload to add clothing <br>
+-Ability to filter the wardrobe by clothing type and weather type <br>
+-Delete items in your closet <br>
+-Generate outfit based on the weather in the user’s current location <br>
+-Plan out the outfits for the next 7 days on a weekly basis <br>
 
 
-New Library/Framework 
-Additional Material UI features- many components use buttons, modals, dropdowns, cards, date picker, and grids. 
+New Library/Framework <br>
+Additional Material UI features- many components use buttons, modals, dropdowns, cards, date picker, and grids. <br>
 
 
 Rest API 
@@ -41,38 +41,38 @@ GET		/users/:id/promote	Gets all the users
 POST		/users/:id/promote	Admin can promote a user
 
 
-External Rest API
+External Rest API<br>
 The National Weather Service API is used to get the real time weather for the location that the user is in. It gets the user’s coordinates and then passes that to api.weather.gov to get the current temperature. This is then mapped in the app to either hot, warm, cool, or cold. 
 
 
-Installation 
-Node..js
-Supabase Project
+Installation <br>
+Node..js<br>
+Supabase Project<br>
 
-Clone the repository 
-git clone https://github.com/mdb326/UndefinedFinal.git 
-cd UndefinedFinal/Closet
+Clone the repository <br>
+git clone https://github.com/mdb326/UndefinedFinal.git <br>
+cd UndefinedFinal/Closet<br>
 
-Set up the server
-cd server
-npm install
+Set up the server<br>
+cd server<br>
+npm install<br>
 
-Create a .env file in /server
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+Create a .env file in /server<br>
+SUPABASE_URL=your_supabase_project_url<br>
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key<br>
 
-Start the server
-Node app.js or npm run dev
+Start the server<br>
+Node app.js or npm run dev<br>
 
-Setup the client 
-cd ../client
-npm install
-npm run dev
+Setup the client <br>
+cd ../client <br>
+npm install <br>
+npm run dev <br>
 
-The app will appear at http://localhost:5173
+The app will appear at http://localhost:5173 <br>
 
-Supabase Setup: 
-In Supabase website run the SQL in SQL editor 
+Supabase Setup: <br>
+In Supabase website run the SQL in SQL editor <br>
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
