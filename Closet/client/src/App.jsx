@@ -42,7 +42,17 @@ function App() {
       }
       >MyDigitalCloset</h1>
       {section === 'home' && user?.is_admin && (
-        <button onClick={() => setSection('admin')}>
+        <button onClick={() => setSection('admin')}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          left: '20px',
+          backgroundColor: '#2a2a2a',
+          color: '#ffffffdd',
+          border: '1px solid #3a3a3a',
+          borderRadius: '8px',
+          fontSize: '0.85rem',
+        }}>
           Admin Panel
         </button>
       )}
@@ -62,3 +72,4 @@ function App() {
 }
 
 export default App;
+
