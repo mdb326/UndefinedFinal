@@ -22,49 +22,32 @@ function Home( {setSection }){
         paddingTop: '270px'
         }}
         >
-            <div className='home-buttons'
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr',
-                    gap: '12px',
-                    color: 'black',
-                    fontSize: '1px'
-                }}>
-                <Button style={{ backgroundColor: '#ebebebff', color: 'black' }} 
-                    onClick={()=>{
-                        setSection('addClothing')
-                    }}
-                > 
-                    Add Clothing
-                </Button>
-                <Button style={{
-                    marginBottom: '105px',
-                    backgroundColor: '#ebebebff',
-                    color: 'black'
-                }}
-                    onClick={()=>{
-                        setSection('myClothes')
-                    }}
-                >
-                    My Clothes
-                </Button>
-                <Button style={{ backgroundColor: '#ebebebff', color: 'black' }}
-                    onClick={()=>{
-                        setSection('generateOutfit')
-                    }}
-                >
-                    Generate Outfit
-                </Button>
-                <Button style={{ backgroundColor: '#ebebebff', color: 'black' }}
-                    onClick={()=>{
-                        setSection('schedule')
-                    }}
-                >
-                    Schedule
-                </Button>
-            </div>
-            
-        </div>
-    )
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+        {[
+        ['Add Clothing', 'addClothing'],
+        ['My Clothes', 'myClothes'],
+        ['Generate Outfit', 'generateOutfit'],
+        ['Schedule', 'schedule'],
+        ].map(([label, section], i) => (
+        <Button
+            key={section}
+            style={{
+            backgroundColor: '#2a2a2a',
+            color: '#ffffffdd',
+            border: '1px solid #3a3a3a',
+            borderRadius: '10px',
+            padding: '10px 28px',
+            fontSize: '0.95rem',
+            fontWeight: 500,
+            textTransform: 'none',
+            }}
+            onClick={() => setSection(section)}
+        >
+            {label}
+        </Button>
+        ))}
+    </div>
+    </div>
+)
 }
 export default Home
