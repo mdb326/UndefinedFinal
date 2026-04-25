@@ -73,26 +73,26 @@ The app will appear at http://localhost:5173 <br>
 
 Supabase Setup: <br>
 In Supabase website run the SQL in SQL editor <br>
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  is_admin BOOLEAN DEFAULT FALSE
-);
+CREATE TABLE users ( <br>
+  id SERIAL PRIMARY KEY,<br>
+  username VARCHAR(50) UNIQUE NOT NULL,<br>
+  password_hash TEXT NOT NULL,<br>
+  is_admin BOOLEAN DEFAULT FALSE<br>
+);<br>
 
-CREATE TABLE clothing_items (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  picture_url TEXT,
-  weather_type TEXT[],
-  clothing_type VARCHAR(50),
-  saved_for_day DATE,
-  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+CREATE TABLE clothing_items (<br>
+  id SERIAL PRIMARY KEY,<br>
+  user_id INTEGER NOT NULL,<br>
+  name VARCHAR(100) NOT NULL,<br>
+  picture_url TEXT,<br>
+  weather_type TEXT[],<br>
+  clothing_type VARCHAR(50),<br>
+  saved_for_day DATE,<br>
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE<br>
+);<br>
+<br>
+Create a bucket to store clothing and users <br>
+Put the URL and Key in the .env file <br>
 
-Create a bucket to store clothing and users 
-Put the URL and Key in the .env file 
-
-National Weather Service API 
-This API is public and free to use, so no API key is required 
+National Weather Service API <br>
+This API is public and free to use, so no API key is required <br>
