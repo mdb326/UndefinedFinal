@@ -177,3 +177,4 @@ function AddClothing({ setSection, user, token }) {
 }
 
 export default AddClothing
+
