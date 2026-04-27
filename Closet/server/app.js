@@ -286,16 +286,22 @@ app.get('/outfit', requireAuth, async (req, res) => {
       return res.status(500).json({ error: error.message });
     }
 
-    // Build outfit (one per clothing type)
-    const outfitMap = {};
-
+    // Build outfit 
+    // first group items by clothing type
+    const groupedByType = {}
     for (const item of data) {
-      if (!outfitMap[item.clothing_type]) {
-        outfitMap[item.clothing_type] = item;
+      if (!groupedByType[item.clothing_type]) {
+        groupedByType[item.clothing_type] = [];
       }
+      groupedByType[item.clothing_type].push(item)
     }
+    //pick on random item per each clothing type
+    const outfit = Object.values(groupedByType).map(items => {
+      const randomIndex = Math.floor(Math.random() * items.length)
+      return items[randomIndex];
+    })
+    res.json(outfit);
 
-    res.json(Object.values(outfitMap));
 
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
